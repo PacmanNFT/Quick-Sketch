@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick  Sketch • Animal Challenge By PacmanNFT</title>
+    <title>Quick Sketch • Animal Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -83,7 +83,7 @@
             
             <h1 class="font-display text-6xl sm:text-7xl tracking-tighter font-bold mb-4">Draw an Animal</h1>
             <p class="max-w-lg mx-auto text-xl text-white/70 leading-relaxed">
-                How fast can you draw? You'll have <span class="font-semibold text-emerald-400">30 seconds</span> to sketch your masterpiece.
+                You’ll get a random animal. You have <span class="font-semibold text-emerald-400">30 seconds</span> to sketch it with the chisel pen.
             </p>
 
             <!-- Preview of possible animals -->
@@ -280,7 +280,7 @@
                     { name: 'Grey', hex: '#9CA3AF' },
                     { name: 'Light Grey', hex: '#E5E7EB' },
                     { name: 'Green', hex: '#22C55E' },
-                    { name: 'Pink', hex: '#F9A8D4' }
+                    { name: 'Dark Green', hex: '#166534' }
                 ]
             },
             { 
@@ -312,7 +312,7 @@
                     { name: 'Tan', hex: '#D97706' },
                     { name: 'Black', hex: '#111827' },
                     { name: 'White', hex: '#F8FAFC' },
-                    { name: 'Pink', hex: '#F9A8D4' },
+                    { name: 'Grey', hex: '#9CA3AF' },
                     { name: 'Dark Brown', hex: '#451A03' }
                 ]
             },
@@ -700,12 +700,12 @@
                 message = `Great energy and shape on that ${currentAnimal.name}!`;
             } else if (finalScore >= 60) {
                 label = 'SOLID SKETCH';
-                message = `Nice work — the ${currentAnimal.name} is clearly recognisable.`;
+                message = `Nice work — the ${currentAnimal.name} is clearly recognizable.`;
             } else if (finalScore >= 45) {
                 label = 'GOOD EFFORT';
                 message = `You got the idea of the ${currentAnimal.name} down. Keep going!`;
             } else {
-                label = 'DON'T GIVE UP YOUR DAY JOB';
+                label = 'NICE TRY';
                 message = `30 seconds is tough! Try focusing on the big shapes next time.`;
             }
             
