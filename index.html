@@ -1,18 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quick Sketch • Animal Challenge</title>
+
+    <!-- Performance: preconnect to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
-        
+
+        :root {
+            --bg-accent: #10b981;
+            --muted: rgba(255,255,255,0.4);
+        }
+
         body {
             font-family: 'Inter', system-ui, sans-serif;
         }
-        
+
         .font-display {
             font-family: 'Space Grotesk', 'Inter', sans-serif;
             font-weight: 600;
@@ -22,7 +33,7 @@
             transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 2px 4px rgb(0 0 0 / 0.12);
         }
-        
+
         .color-swatch.active {
             transform: scale(1.08);
             box-shadow: 0 0 0 3px white, 0 0 0 5px #10b981;
@@ -49,15 +60,22 @@
                 font-size: 5rem;
             }
         }
+
+        /* Respect reduced motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .animate-pulse, .transition, .color-swatch {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-zinc-950 text-white">
     <div class="min-h-screen bg-gradient-to-br from-emerald-950 via-zinc-950 to-black">
-        <!-- Top nav -->
-        <div class="border-b border-white/10 bg-black/30 backdrop-blur-lg">
+        <header class="border-b border-white/10 bg-black/30 backdrop-blur-lg">
             <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center gap-x-3">
-                    <div class="w-9 h-9 bg-emerald-500 rounded-2xl flex items-center justify-center">
+                    <div class="w-9 h-9 bg-emerald-500 rounded-2xl flex items-center justify-center" aria-hidden="true">
                         <i class="fa-solid fa-paw text-white text-xl"></i>
                     </div>
                     <div>
@@ -65,214 +83,208 @@
                         <span class="text-[10px] text-emerald-400 font-mono tracking-[2px] block -mt-1">ANIMAL CHALLENGE</span>
                     </div>
                 </div>
+
                 <div class="hidden md:flex items-center gap-x-2 text-xs px-3 py-1.5 bg-white/5 rounded-2xl border border-white/10">
-                    <i class="fa-solid fa-clock text-emerald-400"></i>
+                    <i class="fa-solid fa-clock text-emerald-400" aria-hidden="true"></i>
                     <span class="font-mono text-emerald-400">30s</span>
                     <span class="text-white/40">•</span>
                     <span class="text-white/60">12 Animals • Chisel Pen</span>
                 </div>
             </div>
-        </div>
+        </header>
 
-        <!-- START SCREEN -->
-        <div id="start-screen" class="max-w-3xl mx-auto px-6 pt-12 pb-16 text-center">
-            <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 mb-6">
-                <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                <span class="text-emerald-400 text-sm font-semibold tracking-wider">ANIMAL MODE</span>
-            </div>
-            
-            <h1 class="font-display text-6xl sm:text-7xl tracking-tighter font-bold mb-4">Draw an Animal</h1>
-            <p class="max-w-lg mx-auto text-xl text-white/70 leading-relaxed">
-                You’ll get a random animal. You have <span class="font-semibold text-emerald-400">30 seconds</span> to sketch it with the chisel pen.
-            </p>
+        <main>
+            <!-- START SCREEN -->
+            <div id="start-screen" class="max-w-3xl mx-auto px-6 pt-12 pb-16 text-center">
+                <a class="sr-only focus:not-sr-only" href="#main-canvas">Skip to canvas</a>
 
-            <!-- Preview of possible animals -->
-            <div class="mt-10 mb-10 flex flex-wrap justify-center gap-3 max-w-xl mx-auto">
-                <span class="text-3xl">🐼</span>
-                <span class="text-3xl">🦁</span>
-                <span class="text-3xl">🐱</span>
-                <span class="text-3xl">🐶</span>
-                <span class="text-3xl">🐷</span>
-                <span class="text-3xl">🐸</span>
-                <span class="text-3xl">🐮</span>
-                <span class="text-3xl">🐪</span>
-                <span class="text-3xl">🦒</span>
-                <span class="text-3xl">🐴</span>
-                <span class="text-3xl">🐵</span>
-                <span class="text-3xl">🐰</span>
-            </div>
-            
-            <button onclick="startChallenge()"
-                    class="group mx-auto flex items-center justify-center gap-x-4 bg-white hover:bg-emerald-50 active:bg-white transition-all text-emerald-950 font-display text-2xl font-semibold px-14 h-20 rounded-3xl shadow-xl shadow-emerald-950/50 hover:shadow-2xl active:scale-[0.985]">
-                <span>START 30 SECOND CHALLENGE</span>
-                <i class="fa-solid fa-play ml-1 group-active:translate-x-0.5 transition"></i>
-            </button>
-            
-            <div class="mt-8 flex justify-center gap-x-8 text-xs text-white/50">
-                <div class="flex items-center gap-x-2">
-                    <i class="fa-solid fa-pen-nib"></i>
-                    <span>Chisel Pen (9px)</span>
+                <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 mb-6">
+                    <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" aria-hidden="true"></div>
+                    <span class="text-emerald-400 text-sm font-semibold tracking-wider">ANIMAL MODE</span>
                 </div>
-                <div class="flex items-center gap-x-2">
-                    <i class="fa-solid fa-palette"></i>
-                    <span>6 Colors</span>
-                </div>
-                <div class="flex items-center gap-x-2">
-                    <i class="fa-solid fa-dice"></i>
-                    <span>12 Animals</span>
-                </div>
-            </div>
-        </div>
 
-        <!-- DRAWING SCREEN -->
-        <div id="drawing-screen" class="hidden max-w-[1080px] mx-auto px-5 pb-12">
-            <div class="flex flex-col lg:flex-row gap-6">
-                
-                <!-- Left sidebar: Prompt + Timer -->
-                <div class="lg:w-72 flex-shrink-0">
-                    <div class="lg:sticky lg:top-6">
-                        <div class="mb-3 px-1">
-                            <div class="text-xs font-semibold tracking-[1.5px] text-white/60">DRAW THIS</div>
-                        </div>
-                        
-                        <!-- Animal Prompt Card -->
-                        <div class="bg-zinc-900 border border-white/15 rounded-3xl p-6 text-center shadow-inner">
-                            <div id="animal-emoji" class="animal-emoji mb-3">🐼</div>
-                            <div id="animal-name" class="font-display text-3xl font-bold tracking-tight capitalize text-white">Panda</div>
-                            <div class="text-xs text-white/40 mt-2 font-mono tracking-widest">30 SECOND SKETCH</div>
-                        </div>
-                        
-                        <!-- Timer -->
-                        <div class="mt-5 bg-zinc-900 border border-white/10 rounded-3xl p-5">
-                            <div class="flex items-baseline justify-between mb-1 px-1">
-                                <div class="text-emerald-400 text-xs font-bold tracking-widest">TIME REMAINING</div>
-                            </div>
-                            <div class="flex items-end gap-x-2">
-                                <div id="timer" 
-                                     class="timer font-display text-[92px] leading-none font-bold tabular-nums text-white tracking-tighter">30</div>
-                                <div class="text-3xl text-white/30 font-light pb-3">s</div>
-                            </div>
-                            
-                            <div class="h-1.5 bg-white/10 rounded mt-3 overflow-hidden">
-                                <div id="timer-bar" class="h-1.5 bg-emerald-400 transition-all duration-300" style="width: 100%"></div>
-                            </div>
-                        </div>
-                        
-                        <button id="finish-early-btn"
-                                onclick="endChallenge(true)"
-                                class="mt-4 w-full flex items-center justify-center gap-x-2 py-3 text-sm font-semibold bg-red-500/90 hover:bg-red-500 active:bg-red-600 transition rounded-2xl">
-                            <i class="fa-solid fa-flag-checkered"></i>
-                            <span>END EARLY</span>
-                        </button>
-                    </div>
+                <h1 class="font-display text-6xl sm:text-7xl tracking-tighter font-bold mb-4">Draw an Animal</h1>
+                <p class="max-w-lg mx-auto text-xl text-white/70 leading-relaxed">
+                    You’ll get a random animal. You have <span class="font-semibold text-emerald-400">30 seconds</span> to sketch it with the chisel pen.
+                </p>
+
+                <!-- Preview of possible animals -->
+                <div class="mt-10 mb-10 flex flex-wrap justify-center gap-3 max-w-xl mx-auto" aria-hidden="true">
+                    <span class="text-3xl">🐼</span>
+                    <span class="text-3xl">🦁</span>
+                    <span class="text-3xl">🐱</span>
+                    <span class="text-3xl">🐶</span>
+                    <span class="text-3xl">🐷</span>
+                    <span class="text-3xl">🐸</span>
+                    <span class="text-3xl">🐮</span>
+                    <span class="text-3xl">🐪</span>
+                    <span class="text-3xl">🦒</span>
+                    <span class="text-3xl">🐴</span>
+                    <span class="text-3xl">🐵</span>
+                    <span class="text-3xl">🐰</span>
                 </div>
-                
-                <!-- Canvas -->
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between mb-3 px-1">
-                        <div>
-                            <span class="font-semibold text-lg">Your Drawing</span>
-                            <span class="ml-3 text-[10px] px-3 py-px rounded bg-emerald-500/10 text-emerald-400 font-mono tracking-widest">CHISEL PEN • 9px</span>
-                        </div>
-                        <button onclick="clearCanvas()" 
-                                class="flex items-center gap-x-2 text-xs px-4 h-9 rounded-2xl border border-white/20 hover:bg-white/5 active:bg-white/10 transition">
-                            <i class="fa-solid fa-undo text-xs"></i>
-                            <span class="font-medium">Clear</span>
-                        </button>
+
+                <button id="start-btn" type="button" onclick="startChallenge()" aria-controls="drawing-screen"
+                        class="group mx-auto flex items-center justify-center gap-x-4 bg-white hover:bg-emerald-50 active:bg-white transition-all text-emerald-950 font-display text-2xl font-semibold px-14 py-3 rounded-3xl">
+                    <span>START 30 SECOND CHALLENGE</span>
+                    <i class="fa-solid fa-play ml-1 group-active:translate-x-0.5 transition" aria-hidden="true"></i>
+                </button>
+
+                <div class="mt-8 flex justify-center gap-x-8 text-xs text-white/50">
+                    <div class="flex items-center gap-x-2">
+                        <i class="fa-solid fa-pen-nib"></i>
+                        <span>Chisel Pen (9px)</span>
                     </div>
-                    
-                    <div class="relative group">
-                        <canvas id="draw-canvas" width="500" height="500"
-                                class="bg-white rounded-3xl shadow-2xl border-[6px] border-white w-full max-w-[500px] mx-auto lg:mx-0 cursor-crosshair"
-                                style="box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);"></canvas>
-                        
-                        <!-- Time up overlay -->
-                        <div id="timeup-overlay" 
-                             class="hidden absolute inset-0 bg-black/70 rounded-3xl flex items-center justify-center backdrop-blur-sm">
-                            <div class="text-center">
-                                <div class="text-red-400 text-6xl font-display font-bold tracking-tighter">TIME'S UP</div>
-                                <p class="text-white/70 mt-1 text-sm">Scoring your animal sketch...</p>
-                            </div>
-                        </div>
+                    <div class="flex items-center gap-x-2">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>6 Colors</span>
                     </div>
-                    
-                    <div class="text-center mt-3 text-[10px] text-white/40 font-mono tracking-widest">500 × 500 PX • MOUSE OR TOUCH</div>
-                </div>
-                
-                <!-- Right: Colors -->
-                <div class="lg:w-64 flex-shrink-0">
-                    <div class="px-1 mb-3">
-                        <div class="text-xs font-semibold tracking-[1.5px] text-white/60 mb-2.5">COLOR PALETTE (6)</div>
-                        
-                        <div id="palette" class="grid grid-cols-3 lg:grid-cols-1 gap-3">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                    
-                    <div class="px-1 mt-4">
-                        <div class="text-xs font-semibold tracking-[1.5px] text-white/60 mb-2">CURRENT COLOR</div>
-                        <div id="selected-color-display" 
-                             class="h-14 rounded-2xl border border-white/20 flex items-center px-4 text-sm font-mono shadow-inner">
-                        </div>
-                    </div>
-                    
-                    <div class="mt-8 px-1 text-[10px] leading-snug text-white/50">
-                        <i class="fa-solid fa-info-circle mr-1"></i>
-                        Bold chisel strokes work best.<br>
-                        Capture the animal’s shape fast!
+                    <div class="flex items-center gap-x-2">
+                        <i class="fa-solid fa-dice"></i>
+                        <span>12 Animals</span>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <!-- DRAWING SCREEN -->
+            <div id="drawing-screen" class="hidden max-w-[1080px] mx-auto px-5 pb-12" aria-hidden="true">
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <!-- Left sidebar: Prompt + Timer -->
+                    <div class="lg:w-72 flex-shrink-0">
+                        <div class="lg:sticky lg:top-6">
+                            <div class="mb-3 px-1">
+                                <div class="text-xs font-semibold tracking-[1.5px] text-white/60">DRAW THIS</div>
+                            </div>
+
+                            <!-- Animal Prompt Card -->
+                            <div class="bg-zinc-900 border border-white/15 rounded-3xl p-6 text-center shadow-inner">
+                                <div id="animal-emoji" class="animal-emoji mb-3" aria-hidden="true">🐼</div>
+                                <div id="animal-name" class="font-display text-3xl font-bold tracking-tight capitalize text-white">Panda</div>
+                                <div class="text-xs text-white/40 mt-2 font-mono tracking-widest">30 SECOND SKETCH</div>
+                            </div>
+
+                            <!-- Timer -->
+                            <div class="mt-5 bg-zinc-900 border border-white/10 rounded-3xl p-5">
+                                <div class="flex items-baseline justify-between mb-1 px-1">
+                                    <div class="text-emerald-400 text-xs font-bold tracking-widest">TIME REMAINING</div>
+                                </div>
+                                <div class="flex items-end gap-x-2">
+                                    <div id="timer" aria-live="polite" class="timer font-display text-[92px] leading-none font-bold tabular-nums text-white tracking-tighter">30</div>
+                                    <div class="text-3xl text-white/30 font-light pb-3">s</div>
+                                </div>
+
+                                <div class="h-1.5 bg-white/10 rounded mt-3 overflow-hidden">
+                                    <div id="timer-bar" class="h-1.5 bg-emerald-400 transition-all duration-300" style="width: 100%"></div>
+                                </div>
+                            </div>
+
+                            <button id="finish-early-btn" type="button"
+                                    onclick="endChallenge(true)"
+                                    class="mt-4 w-full flex items-center justify-center gap-x-2 py-3 text-sm font-semibold bg-red-500/90 hover:bg-red-500 active:bg-red-600 transition rounded-2xl">
+                                <i class="fa-solid fa-flag-checkered"></i>
+                                <span>END EARLY</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-3 px-1">
+                            <div>
+                                <span class="font-semibold text-lg">Your Drawing</span>
+                                <span class="ml-3 text-[10px] px-3 py-px rounded bg-emerald-500/10 text-emerald-400 font-mono tracking-widest">CHISEL PEN • 9px</span>
+                            </div>
+                            <button id="clear-btn" type="button" onclick="clearCanvas()"
+                                    class="flex items-center gap-x-2 text-xs px-4 h-9 rounded-2xl border border-white/20 hover:bg-white/5 active:bg-white/10 transition">
+                                <i class="fa-solid fa-undo text-xs"></i>
+                                <span class="font-medium">Clear</span>
+                            </button>
+                        </div>
+
+                        <div class="relative group">
+                            <canvas id="draw-canvas" width="500" height="500" tabindex="0" aria-label="Drawing canvas" class="bg-white rounded-3xl shadow-2xl border-[6px] border-white w-full max-w-[500px] mx-auto lg:mx-0 cursor-crosshair" style="box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);"></canvas>
+
+                            <!-- Time up overlay -->
+                            <div id="timeup-overlay" class="hidden absolute inset-0 bg-black/70 rounded-3xl flex items-center justify-center backdrop-blur-sm" aria-hidden="true">
+                                <div class="text-center">
+                                    <div class="text-red-400 text-6xl font-display font-bold tracking-tighter">TIME'S UP</div>
+                                    <p class="text-white/70 mt-1 text-sm">Scoring your animal sketch...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="main-canvas" class="text-center mt-3 text-[10px] text-white/40 font-mono tracking-widest">500 × 500 PX • MOUSE OR TOUCH</div>
+                    </div>
+
+                    <!-- Right: Colors -->
+                    <div class="lg:w-64 flex-shrink-0">
+                        <div class="px-1 mb-3">
+                            <div class="text-xs font-semibold tracking-[1.5px] text-white/60 mb-2.5">COLOR PALETTE (6)</div>
+
+                            <div id="palette" class="grid grid-cols-3 lg:grid-cols-1 gap-3" aria-label="Color palette">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <div class="px-1 mt-4">
+                            <div class="text-xs font-semibold tracking-[1.5px] text-white/60 mb-2">CURRENT COLOR</div>
+                            <div id="selected-color-display" class="h-14 rounded-2xl border border-white/20 flex items-center px-4 text-sm font-mono shadow-inner" aria-live="polite">
+                            </div>
+                        </div>
+
+                        <div class="mt-8 px-1 text-[10px] leading-snug text-white/50">
+                            <i class="fa-solid fa-info-circle mr-1"></i>
+                            Bold chisel strokes work best.<br>
+                            Capture the animal’s shape fast!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-    
+
     <!-- RESULTS MODAL -->
-    <div id="results-modal" onclick="if (event.target.id === 'results-modal') hideResults()" 
-         class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="bg-zinc-900 border border-white/10 w-full max-w-md rounded-3xl p-8 shadow-2xl">
-            
+    <div id="results-modal" onclick="if (event.target.id === 'results-modal') hideResults()" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="results-title" aria-describedby="results-desc" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-[100] p-4">
+        <div id="results-panel" tabindex="-1" onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-white/10 w-full max-w-md rounded-3xl p-8 shadow-2xl">
             <div class="text-center">
                 <div class="mx-auto w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-5">
                     <i class="fa-solid fa-paw text-emerald-400 text-3xl"></i>
                 </div>
-                
-                <h3 class="font-display text-3xl tracking-tight font-semibold">Your Sketch Score</h3>
-                
+
+                <h3 id="results-title" class="font-display text-3xl tracking-tight font-semibold">Your Sketch Score</h3>
+
                 <div class="my-6">
-                    <div id="score-value" 
-                         class="font-display text-[120px] leading-none font-black tracking-[-6px] bg-gradient-to-b from-white to-emerald-300 bg-clip-text text-transparent">82</div>
+                    <div id="score-value" class="font-display text-[120px] leading-none font-black tracking-[-6px] bg-gradient-to-b from-white to-emerald-300 bg-clip-text text-transparent">82</div>
                     <div id="score-text" class="text-3xl font-semibold -mt-3 text-emerald-400"></div>
                 </div>
-                
+
                 <div id="score-message" class="text-white/70 text-sm max-w-[280px] mx-auto"></div>
                 <div id="animal-result" class="mt-4 text-lg font-semibold text-white/90"></div>
+                <div id="results-desc" class="sr-only">Result details and actions</div>
             </div>
-            
+
             <div class="mt-8 space-y-3">
-                <button onclick="saveDrawing()" 
-                        class="w-full flex items-center justify-center gap-x-3 h-14 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 transition font-semibold text-lg rounded-2xl">
+                <button id="save-btn" type="button" onclick="saveDrawing()" class="w-full flex items-center justify-center gap-x-3 h-14 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 transition font-semibold text-lg rounded-2xl">
                     <i class="fa-solid fa-download"></i>
                     <span>SAVE MY DRAWING</span>
                 </button>
-                
-                <button onclick="restartApp()" 
-                        class="w-full flex items-center justify-center gap-x-3 h-14 bg-white/5 hover:bg-white/10 active:bg-white/5 transition font-medium rounded-2xl border border-white/10">
+
+                <button id="new-btn" type="button" onclick="restartApp()" class="w-full flex items-center justify-center gap-x-3 h-14 bg-white/5 hover:bg-white/10 active:bg-white/5 transition font-medium rounded-2xl border border-white/10">
                     <i class="fa-solid fa-dice"></i>
                     <span>NEW ANIMAL</span>
                 </button>
             </div>
-            
+
             <div class="text-center mt-6">
-                <button onclick="hideResults()" class="text-xs text-white/40 hover:text-white/70">CLOSE</button>
+                <button id="close-btn" type="button" onclick="hideResults()" class="text-xs text-white/40 hover:text-white/70">CLOSE</button>
             </div>
         </div>
     </div>
-    
+
     <script>
         // ========== ANIMAL POOL ==========
         const ANIMALS = [
-            { 
+            {
                 name: "panda", emoji: "🐼",
                 colors: [
                     { name: 'Black', hex: '#111827' },
@@ -283,7 +295,7 @@
                     { name: 'Dark Green', hex: '#166534' }
                 ]
             },
-            { 
+            {
                 name: "lion", emoji: "🦁",
                 colors: [
                     { name: 'Gold', hex: '#FBBF24' },
@@ -294,7 +306,7 @@
                     { name: 'White', hex: '#F8FAFC' }
                 ]
             },
-            { 
+            {
                 name: "cat", emoji: "🐱",
                 colors: [
                     { name: 'Orange', hex: '#F97316' },
@@ -305,7 +317,7 @@
                     { name: 'Brown', hex: '#A16207' }
                 ]
             },
-            { 
+            {
                 name: "dog", emoji: "🐶",
                 colors: [
                     { name: 'Brown', hex: '#92400E' },
@@ -316,7 +328,7 @@
                     { name: 'Dark Brown', hex: '#451A03' }
                 ]
             },
-            { 
+            {
                 name: "pig", emoji: "🐷",
                 colors: [
                     { name: 'Pink', hex: '#F9A8D4' },
@@ -327,7 +339,7 @@
                     { name: 'Rose', hex: '#E11D48' }
                 ]
             },
-            { 
+            {
                 name: "frog", emoji: "🐸",
                 colors: [
                     { name: 'Green', hex: '#22C55E' },
@@ -338,7 +350,7 @@
                     { name: 'Lime', hex: '#84CC16' }
                 ]
             },
-            { 
+            {
                 name: "cow", emoji: "🐮",
                 colors: [
                     { name: 'Black', hex: '#111827' },
@@ -349,7 +361,7 @@
                     { name: 'Dark Brown', hex: '#451A03' }
                 ]
             },
-            { 
+            {
                 name: "camel", emoji: "🐪",
                 colors: [
                     { name: 'Tan', hex: '#D97706' },
@@ -360,7 +372,7 @@
                     { name: 'White', hex: '#F8FAFC' }
                 ]
             },
-            { 
+            {
                 name: "rabbit", emoji: "🐰",
                 colors: [
                     { name: 'White', hex: '#F8FAFC' },
@@ -371,7 +383,7 @@
                     { name: 'Black', hex: '#111827' }
                 ]
             },
-            { 
+            {
                 name: "giraffe", emoji: "🦒",
                 colors: [
                     { name: 'Yellow', hex: '#FACC15' },
@@ -382,7 +394,7 @@
                     { name: 'White', hex: '#F8FAFC' }
                 ]
             },
-            { 
+            {
                 name: "horse", emoji: "🐴",
                 colors: [
                     { name: 'Brown', hex: '#92400E' },
@@ -393,7 +405,7 @@
                     { name: 'Dark Brown', hex: '#451A03' }
                 ]
             },
-            { 
+            {
                 name: "monkey", emoji: "🐵",
                 colors: [
                     { name: 'Brown', hex: '#92400E' },
@@ -410,7 +422,7 @@
         let canvas, ctx;
         let isDrawing = false;
         let currentColor = '#111827';
-        let lineWidth = 9;
+        const lineWidth = 9; // visible CSS px size
         let timerInterval = null;
         let timeLeft = 30;
         let isChallengeActive = false;
@@ -418,138 +430,180 @@
         let currentAnimal = null;
         let strokeCount = 0;
         let COLORS = [];  // will be set per animal
+        let pixelRatio = window.devicePixelRatio || 1;
+        let lastFocusedBeforeModal = null;
+        let resizeTimeout = null;
 
         // ========== PALETTE ==========
         function populatePalette() {
             const palette = document.getElementById('palette');
             palette.innerHTML = '';
-            
-            COLORS.forEach((color, index) => {
+
+            COLORS.forEach((color) => {
                 const swatch = document.createElement('button');
-                swatch.className = `color-swatch w-full aspect-square lg:aspect-auto lg:h-11 rounded-2xl border border-white/30 flex items-center justify-center lg:justify-start lg:gap-x-3 lg:px-3.5 overflow-hidden ${index === 0 ? 'active' : ''}`;
+                swatch.type = 'button';
+                swatch.className = 'color-swatch w-full aspect-square lg:aspect-auto lg:h-11 rounded-2xl border border-white/30 flex items-center justify-center lg:justify-start lg:gap-x-3 lg:px-3.5';
                 swatch.style.backgroundColor = color.hex;
-                
+                swatch.setAttribute('aria-label', color.name + ' color');
+
                 if (color.hex === '#F8FAFC') {
                     swatch.style.border = '1px solid #64748b30';
                     swatch.innerHTML = `<span class="hidden lg:inline text-xs font-semibold text-zinc-900 ml-1">${color.name}</span>`;
                 } else {
                     swatch.innerHTML = `<span class="hidden lg:inline text-xs font-semibold text-white ml-1 drop-shadow">${color.name}</span>`;
                 }
-                
+
                 swatch.onclick = () => selectColor(color.hex, swatch);
                 swatch.title = color.name;
                 palette.appendChild(swatch);
             });
-            
+
+            // select first color after palette built
             setTimeout(() => {
                 const first = palette.children[0];
                 if (first) selectColor(COLORS[0].hex, first);
             }, 50);
         }
-        
+
         function selectColor(hex, swatchElement) {
             currentColor = hex;
             usedColors.add(hex);
-            
+
             document.querySelectorAll('#palette .color-swatch').forEach(el => {
                 el.classList.remove('active');
                 if (el === swatchElement) el.classList.add('active');
             });
-            
+
             const display = document.getElementById('selected-color-display');
             display.style.backgroundColor = hex;
             display.style.color = (hex === '#F8FAFC' || hex === '#111827') ? '#111827' : '#fff';
+            const colorObj = COLORS.find(c => c.hex === hex) || { name: hex };
             display.innerHTML = `
                 <div class="flex-1">
                     <div class="font-mono text-xs opacity-75">${hex}</div>
-                    <div class="font-semibold">${COLORS.find(c => c.hex === hex).name}</div>
+                    <div class="font-semibold">${colorObj.name}</div>
                 </div>
             `;
         }
 
-        // ========== CANVAS ==========
+        // ========== CANVAS & POINTERS ==========
+        function resizeCanvasForDPR() {
+            const cssWidth = 500;
+            const cssHeight = 500;
+            pixelRatio = window.devicePixelRatio || 1;
+
+            // set element size (CSS pixels)
+            canvas.style.width = cssWidth + 'px';
+            canvas.style.height = cssHeight + 'px';
+
+            // set backing store size (device pixels)
+            canvas.width = Math.floor(cssWidth * pixelRatio);
+            canvas.height = Math.floor(cssHeight * pixelRatio);
+
+            // Ensure drawing is crisp by using device pixel backing but not scaling the context
+            // We'll multiply lineWidth by pixelRatio when drawing and scale positions accordingly in getPos.
+            clearCanvas(); // redraw white background at new size
+        }
+
         function initCanvas() {
             canvas = document.getElementById('draw-canvas');
             ctx = canvas.getContext('2d', { alpha: true, willReadFrequently: true });
-            
+
+            resizeCanvasForDPR();
+
+            // White background
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseout', stopDrawing);
-            
-            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
-            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
-            canvas.addEventListener('touchend', stopDrawing);
-            
+
+            // Pointer events unify mouse/touch/stylus
+            canvas.addEventListener('pointerdown', startDrawing);
+            canvas.addEventListener('pointermove', draw);
+            canvas.addEventListener('pointerup', stopDrawing);
+            canvas.addEventListener('pointercancel', stopDrawing);
+            canvas.addEventListener('pointerout', stopDrawing);
             canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+            // handle keyboard shortcuts when canvas focused
+            canvas.addEventListener('keydown', (e) => {
+                if ((e.key || '').toLowerCase() === 'c') {
+                    clearCanvas();
+                } else if (e.key === 'Escape' && isChallengeActive) {
+                    endChallenge(true);
+                }
+            });
+
+            // handle resize (debounced)
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    // only resize if drawing screen is visible to preserve existing canvas in memory for now
+                    if (!document.getElementById('drawing-screen').classList.contains('hidden')) {
+                        // Note: resizing clears the canvas; you can capture/restore image if you want undo-on-resize.
+                        resizeCanvasForDPR();
+                    }
+                }, 200);
+            });
         }
-        
+
         function getPos(e) {
             const rect = canvas.getBoundingClientRect();
+            // convert client coordinates to backing-store coordinates (device pixels) because canvas.width is device pixels
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
-            
-            let clientX = e.clientX;
-            let clientY = e.clientY;
-            
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            }
-            
+
+            const clientX = e.clientX;
+            const clientY = e.clientY;
+
             return {
                 x: (clientX - rect.left) * scaleX,
                 y: (clientY - rect.top) * scaleY
             };
         }
-        
+
         function startDrawing(e) {
             if (!isChallengeActive) return;
-            
+
+            // capture pointer so we continue receiving events even if pointer leaves canvas
+            try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+
             isDrawing = true;
             const pos = getPos(e);
-            
+
+            // set stroke style. lineWidth is scaled for backing store to keep visible thickness consistent
             ctx.strokeStyle = currentColor;
-            ctx.lineWidth = lineWidth;
+            ctx.lineWidth = lineWidth * (canvas.width / canvas.style.width.replace('px', ''));
+            if (!isFinite(ctx.lineWidth) || ctx.lineWidth <= 0) {
+                // fallback: multiply by pixelRatio
+                ctx.lineWidth = lineWidth * pixelRatio;
+            }
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
-            
+
             ctx.beginPath();
             ctx.moveTo(pos.x, pos.y);
             usedColors.add(currentColor);
             strokeCount++;
         }
-        
+
         function draw(e) {
             if (!isDrawing || !isChallengeActive) return;
-            
+
             const pos = getPos(e);
             ctx.strokeStyle = currentColor;
-            ctx.lineWidth = lineWidth;
+            // ensure lineWidth still appropriate if pixel ratio changed
+            ctx.lineWidth = lineWidth * (canvas.width / (parseFloat(canvas.style.width) || 500));
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
         }
-        
-        function stopDrawing() {
+
+        function stopDrawing(e) {
             if (isDrawing) {
                 isDrawing = false;
                 ctx.closePath();
             }
+            try { if (e && e.pointerId) canvas.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
         }
-        
-        function handleTouchStart(e) {
-            e.preventDefault();
-            startDrawing(e);
-        }
-        
-        function handleTouchMove(e) {
-            e.preventDefault();
-            draw(e);
-        }
-        
+
         function clearCanvas() {
             if (!ctx || !canvas) return;
             ctx.fillStyle = '#ffffff';
@@ -562,12 +616,12 @@
         function updateTimer() {
             const timerEl = document.getElementById('timer');
             const barEl = document.getElementById('timer-bar');
-            
+
             timerEl.textContent = timeLeft;
-            
-            const percent = (timeLeft / 30) * 100;
+
+            const percent = Math.max(0, (timeLeft / 30) * 100);
             barEl.style.width = `${percent}%`;
-            
+
             if (timeLeft <= 10) {
                 timerEl.style.color = '#f87171';
                 barEl.style.backgroundColor = '#f87171';
@@ -578,31 +632,34 @@
                 timerEl.style.color = '#ffffff';
                 barEl.style.backgroundColor = '#10b981';
             }
-            
+
             if (timeLeft <= 0) {
                 endChallenge(false);
             }
         }
-        
+
         function startTimer() {
             timeLeft = 30;
             isChallengeActive = true;
             usedColors.clear();
             strokeCount = 0;
-            
+
             const timerEl = document.getElementById('timer');
             timerEl.style.color = '#ffffff';
-            
             updateTimer();
-            
-            if (timerInterval) clearInterval(timerInterval);
-            
+
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+
             timerInterval = setInterval(() => {
                 timeLeft--;
                 updateTimer();
-                
+
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
+                    timerInterval = null;
                     endChallenge(false);
                 }
             }, 1000);
@@ -613,85 +670,110 @@
             const idx = Math.floor(Math.random() * ANIMALS.length);
             return ANIMALS[idx];
         }
-        
+
         function startChallenge() {
+            if (isChallengeActive) return; // idempotent
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = true;
+            startBtn.setAttribute('aria-disabled', 'true');
+
             currentAnimal = pickRandomAnimal();
-            
+
             // Set animal-specific colors and rebuild palette
             COLORS = currentAnimal.colors;
             populatePalette();
-            
+
             // Update prompt UI
             document.getElementById('animal-emoji').textContent = currentAnimal.emoji;
             document.getElementById('animal-name').textContent = currentAnimal.name;
-            
+
             // Switch screens
             document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('drawing-screen').classList.remove('hidden');
-            
+            const drawingScreen = document.getElementById('drawing-screen');
+            drawingScreen.classList.remove('hidden');
+            drawingScreen.setAttribute('aria-hidden', 'false');
+
             if (!canvas) {
                 initCanvas();
             } else {
                 clearCanvas();
             }
-            
+
+            // reset overlay hidden
+            const overlay = document.getElementById('timeup-overlay');
+            overlay.style.display = 'none';
+            overlay.classList.add('hidden');
+
             startTimer();
-            
+
             setTimeout(() => {
-                document.getElementById('draw-canvas').focus();
+                // focus the canvas for keyboard shortcuts
+                const c = document.getElementById('draw-canvas');
+                if (c) c.focus();
             }, 80);
         }
-        
+
         function endChallenge(early = false) {
             if (!isChallengeActive) return;
-            
+
             isChallengeActive = false;
-            clearInterval(timerInterval);
-            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+
+            // re-enable start button for next run
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = false;
+            startBtn.removeAttribute('aria-disabled');
+
             const overlay = document.getElementById('timeup-overlay');
             overlay.style.display = 'flex';
             overlay.classList.remove('hidden');
-            
+            overlay.setAttribute('aria-hidden', 'false');
+
             setTimeout(() => {
                 overlay.style.display = 'none';
                 overlay.classList.add('hidden');
+                overlay.setAttribute('aria-hidden', 'true');
                 calculateAndShowScore(early);
             }, early ? 500 : 900);
         }
 
-        // ========== SCORING (activity-based, no reference image needed) ==========
+        // ========== SCORING ==========
         function calculateAndShowScore(earlyFinish) {
             const modal = document.getElementById('results-modal');
             const scoreEl = document.getElementById('score-value');
             const textEl = document.getElementById('score-text');
             const msgEl = document.getElementById('score-message');
             const animalResultEl = document.getElementById('animal-result');
-            
+
             // Calculate coverage (how much of the canvas is drawn on)
             let nonWhite = 0;
             const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             const total = canvas.width * canvas.height;
-            
+
             for (let i = 0; i < data.length; i += 4) {
                 // Count pixel as drawn if it's not near-white
                 if (data[i] < 245 || data[i+1] < 245 || data[i+2] < 245) {
                     nonWhite++;
                 }
             }
-            
-            const coverage = Math.min(1, nonWhite / total * 3.2); // amplify a bit so sparse sketches still score ok
-            const colorRatio = usedColors.size / COLORS.length;
+
+            // Coverage normalized to 0..1, amplify slightly to reward sparse sketches
+            const coverage = Math.min(1, nonWhite / total * 3.2);
+            const colorRatio = usedColors.size / (COLORS.length || 1);
             const timeRatio = earlyFinish ? 0 : (timeLeft / 30);
             const strokeBonus = Math.min(1, strokeCount / 40);
-            
-            // Weighted score
+
+            // Weighted score (extractable into a pure function if desired)
             let raw = (coverage * 38) + (colorRatio * 28) + (timeRatio * 18) + (strokeBonus * 12) + 8;
             let finalScore = Math.round(Math.max(15, Math.min(100, raw)));
-            
+
             // Fun labels
             let label = '';
             let message = '';
-            
+
             if (finalScore >= 88) {
                 label = 'MASTERPIECE!';
                 message = `That ${currentAnimal.name} looks incredible for 30 seconds!`;
@@ -708,14 +790,14 @@
                 label = 'NICE TRY';
                 message = `30 seconds is tough! Try focusing on the big shapes next time.`;
             }
-            
+
             if (earlyFinish) message = 'Finished early. ' + message;
-            
+
             scoreEl.textContent = finalScore;
             textEl.textContent = label;
             msgEl.textContent = message;
             animalResultEl.innerHTML = `${currentAnimal.emoji} You drew a <span class="capitalize">${currentAnimal.name}</span>`;
-            
+
             // Color the score
             if (finalScore >= 75) {
                 scoreEl.style.background = 'linear-gradient(to bottom, #fff, #34d399)';
@@ -724,27 +806,44 @@
             } else {
                 scoreEl.style.background = 'linear-gradient(to bottom, #fff, #f87171)';
             }
-            
+
+            // Show modal and manage focus
+            lastFocusedBeforeModal = document.activeElement;
             modal.style.display = 'flex';
             modal.classList.remove('hidden');
+            modal.setAttribute('aria-hidden', 'false');
+
+            // focus primary action
+            const saveBtn = document.getElementById('save-btn');
+            if (saveBtn) saveBtn.focus();
         }
-        
+
         function hideResults() {
             const modal = document.getElementById('results-modal');
             modal.style.display = 'none';
             modal.classList.add('hidden');
+            modal.setAttribute('aria-hidden', 'true');
+
+            // restore focus to where it was before
+            if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+                lastFocusedBeforeModal.focus();
+            } else {
+                const startBtn = document.getElementById('start-btn');
+                if (startBtn) startBtn.focus();
+            }
         }
-        
+
         function saveDrawing() {
             if (!canvas) return;
-            
+
             const link = document.createElement('a');
             const timestamp = new Date().toISOString().slice(0, 19).replace('T', '_');
             const name = currentAnimal ? currentAnimal.name : 'animal';
             link.download = `quicksketch_${name}_${timestamp}.png`;
+            // toDataURL uses backing store; it's fine to use without extra scaling here
             link.href = canvas.toDataURL('image/png');
             link.click();
-            
+
             const btns = document.querySelectorAll('#results-modal button');
             if (btns.length > 0) {
                 const original = btns[0].innerHTML;
@@ -754,52 +853,57 @@
                 }, 1500);
             }
         }
-        
+
         function restartApp() {
             hideResults();
-            
+
             document.getElementById('drawing-screen').classList.add('hidden');
             document.getElementById('start-screen').classList.remove('hidden');
-            
+
             const timerEl = document.getElementById('timer');
             timerEl.textContent = '30';
             timerEl.style.color = '#ffffff';
             document.getElementById('timer-bar').style.width = '100%';
             document.getElementById('timer-bar').style.backgroundColor = '#10b981';
-            
+
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
             }
-            
+
             isChallengeActive = false;
             currentAnimal = null;
+
+            // clear canvas and state
+            if (ctx && canvas) {
+                clearCanvas();
+            }
         }
 
         // ========== INIT ==========
         function initEverything() {
             // Palette is populated when a challenge starts (animal-specific colors)
-            
+
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     const modal = document.getElementById('results-modal');
                     const drawingScreen = document.getElementById('drawing-screen');
-                    
+
                     if (modal.style.display === 'flex') {
                         hideResults();
                     } else if (!drawingScreen.classList.contains('hidden') && isChallengeActive) {
                         endChallenge(true);
                     }
                 }
-                
-                if ((e.key.toLowerCase() === 'c') && !document.getElementById('drawing-screen').classList.contains('hidden')) {
+
+                if ((e.key || '').toLowerCase() === 'c' && !document.getElementById('drawing-screen').classList.contains('hidden')) {
                     clearCanvas();
                 }
             });
-            
+
             console.log('%c[QuickSketch] Animal Challenge ready. 12 animals available.', 'color:#64748b');
         }
-        
+
         window.onload = function() {
             initEverything();
         };
